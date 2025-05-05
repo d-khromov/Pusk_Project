@@ -25,9 +25,9 @@ class ReviewModel(BaseModel):
 class ReviewDb(Base):
     __tablename__ = "reviews"
     id = Column(Integer, primary_key=True)
-    title:str = Column(String, unique=True, index=True)
+    title:str = Column(String, unique=False, index=True)
     author:str = Column(String, unique=False, index=True)
     field:str = Column(String, unique=False, index=True)
     email:str = Column(String, unique=False, index=True)
-    review:str = Column(String, unique=False, index=True)
+    review:str = Column(String, unique=True, index=True)
     grade:float = Column(Float, unique=False, index=True)

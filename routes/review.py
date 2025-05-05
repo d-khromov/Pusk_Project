@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Depends, HTTPException, Query
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from db import engine, SessionLocal, get_session
 from schemas import review as schema_review
 from schemas import paper as schema_paper
@@ -73,3 +73,61 @@ def get_reviews(
 
 
 
+
+
+
+@router.get("/top_paper_in_field", response_model=list[schema_paper.PaperGetBest])
+def get_best_papers(
+        field: str = Query(None, description="Тематика статьи"),
+        limit: int = Query(1, description="Количество статей"),
+        min_grade: float = Query(5, description="Минимальная оценка"),
+        session: Session = Depends(get_session)
+    ):
+    # Оценка статьи -- это средняя оценка из всех ревью на нее
+    subquery = (
+        select(
+            schema_review.ReviewDb.title,
+            schema_review.ReviewDb.author,
+            schema_review.ReviewDb.field,
+            func.avg(schema_review.ReviewDb.grade).label("grade")
+        ).where(schema_review.ReviewDb.field == field).group_by(
+            schema_review.ReviewDb.title,
+            schema_review.ReviewDb.author,
+            schema_review.ReviewDb.field)
+        .subquery()
+    )
+
+    query = (
+        select(
+            schema_paper.PaperDb,
+            subquery.c.grade.label("grade")
+        )
+        .join(
+            subquery,
+            (schema_paper.PaperDb.title == subquery.c.title) &
+            (schema_paper.PaperDb.author == subquery.c.author) &
+            (schema_paper.PaperDb.field == subquery.c.field)
+        ).order_by(subquery.c.grade.desc()).limit(limit)
+    )
+
+    if min_grade is not None:
+        query = query.where(subquery.c.grade >= min_grade)
+
+    results = session.execute(query).fetchall()
+
+    if not results:
+        raise HTTPException(
+            status_code=404,
+            detail="Таких статей нет"
+        )
+
+    return [
+        schema_paper.PaperGetBest(
+            title=paper[0].title,
+            author=paper[0].author,
+            field=paper[0].field,
+            email=paper[0].email,
+            grade=paper[1]
+        )
+        for paper in results
+    ]

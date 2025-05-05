@@ -27,6 +27,9 @@ class PaperGet(PaperBaseModel):
         max_length=300
     )
 
+class PaperGetBest(PaperGet):
+    grade: float
+
 class PaperAsk(PaperBaseModel):
     email: str = Field(
         title="Email пользователя, которому нужна статья",
