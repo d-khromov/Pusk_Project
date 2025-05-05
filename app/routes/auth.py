@@ -1,12 +1,12 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlmodel import Session, select
-from db import get_session
-from schemas import user as schema_user
+from app.db import get_session
+from app.schemas import user as schema_user
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from auth import auth_handler
-from config import settings
+from app.auth import auth_handler
+from app.config import settings
 from datetime import timedelta
 
 
@@ -61,8 +61,7 @@ def user_login(login_attempt_data: OAuth2PasswordRequestForm = Depends(),
             "access_token": access_token,
             "token_type": "bearer"
         }
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Wrong password for user {login_attempt_data.username}"
-        )
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=f"Wrong password for user {login_attempt_data.username}"
+    )

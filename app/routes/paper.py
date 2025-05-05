@@ -1,11 +1,10 @@
 from fastapi import APIRouter, status, Depends, HTTPException, Query
-from sqlmodel import Session, select
-from db import engine, SessionLocal, get_session
-from schemas import paper as schema_paper
+from sqlmodel import Session
+from app.db import (get_session)
+from app.schemas import paper as schema_paper
 from typing import Optional
-from auth import auth_handler
+from app.auth import auth_handler
 #from ..api_docs import request_examples
-from sqlalchemy import text
 
 router = APIRouter(prefix="/papers", tags=["БД статей"])
 

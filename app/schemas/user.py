@@ -1,6 +1,6 @@
-from pydantic import (BaseModel, Field)
-from sqlalchemy import Column, Integer, String, UniqueConstraint, ForeignKey, Boolean
-from db import Base
+from pydantic import (BaseModel)
+from sqlalchemy import Column, Integer, String, UniqueConstraint
+from app.db import Base
 
 
 class UserModel(BaseModel):

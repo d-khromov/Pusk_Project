@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from routes import (paper, auth, review)
-from db import Base, engine
+from app.routes import auth
+from app.routes import paper, review
+from app.db import Base, engine
 
 
 Base.metadata.create_all(bind=engine)

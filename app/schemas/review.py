@@ -1,6 +1,6 @@
 from pydantic import (BaseModel, Field)
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
-from db import Base
+from sqlalchemy import Column, Integer, String, Float
+from app.db import Base
 
 
 class ReviewModel(BaseModel):

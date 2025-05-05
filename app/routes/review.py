@@ -1,20 +1,19 @@
 from fastapi import APIRouter, status, Depends, HTTPException, Query
 from sqlmodel import Session, select, func
-from db import engine, SessionLocal, get_session
-from schemas import review as schema_review
-from schemas import paper as schema_paper
+from app.db import get_session
+from app.schemas import paper as schema_paper
+from app.schemas import review as schema_review
 from typing import Optional
-from auth import auth_handler
+from app.auth import auth_handler
 #from ..api_docs import request_examples
-from sqlalchemy import text
 
 router = APIRouter(prefix="/reviews", tags=["Отзывы на статьи"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED,
              response_model=schema_review.ReviewModel)
 def upload_review(review: schema_review.ReviewModel,
-                 session: Session = Depends(get_session),
-                 current_user: dict = Depends(auth_handler.get_current_user)):
+                  session: Session = Depends(get_session),
+                  current_user: dict = Depends(auth_handler.get_current_user)):
     # if the paper was not even posted, user should first post and then review
     paper_posted = session.execute(
         select(schema_paper.PaperDb).where(

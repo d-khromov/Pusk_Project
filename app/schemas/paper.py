@@ -1,6 +1,6 @@
 from pydantic import (BaseModel, Field)
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
-from db import Base
+from sqlalchemy import Column, Integer, String, Boolean
+from app.db import Base
 
 
 class PaperBaseModel(BaseModel):
