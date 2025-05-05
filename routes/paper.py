@@ -7,7 +7,7 @@ from auth import auth_handler
 #from ..api_docs import request_examples
 from sqlalchemy import text
 
-router = APIRouter(prefix="/papers", tags=["Управление БД статей"])
+router = APIRouter(prefix="/papers", tags=["БД статей"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED,
              response_model=schema_paper.PaperModel)
@@ -19,7 +19,7 @@ def upload_paper(paper: schema_paper.PaperModel,
         author = paper.author,
         field = paper.field,
         status = bool(paper.status),
-        uploader_email=current_user.email
+        email=current_user.email
     )
     session.add(new_paper)
     session.commit()
