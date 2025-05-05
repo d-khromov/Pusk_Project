@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import (paper)
+from routes import (paper, auth)
 from db import Base, engine
 
 
@@ -19,3 +19,4 @@ app = FastAPI(
 )
 
 app.include_router(paper.router)
+app.include_router(auth.router)

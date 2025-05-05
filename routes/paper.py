@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Depends, HTTPException, Query
 from sqlmodel import Session, select
-from db import engine, SessionLocal, get_db
+from db import engine, SessionLocal, get_session
 from schemas import paper as schema_paper
 from typing import Optional
 #from ..api_docs import request_examples
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/papers", tags=["Управление БД стате
 @router.post("/", status_code=status.HTTP_201_CREATED,
              response_model=schema_paper.PaperModel)
 def upload_paper(paper: schema_paper.PaperModel,
-                 session: Session = Depends(get_db)):
+                 session: Session = Depends(get_session)):
     new_paper = schema_paper.PaperDb(
         title =paper.title,
         author = paper.author,
@@ -30,7 +30,7 @@ def get_papers(
         author: Optional[str] = Query(None, description="Автор статьи"),
         field: Optional[str] = Query(None, description="Тематика статьи"),
         limit: int = 100,
-        session: Session = Depends(get_db)
+        session: Session = Depends(get_session)
     ):
     query = session.query(schema_paper.PaperDb)
 
