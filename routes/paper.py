@@ -18,7 +18,7 @@ def upload_paper(paper: schema_paper.PaperModel,
         title =paper.title,
         author = paper.author,
         field = paper.field,
-        status = paper.status,
+        status = bool(paper.status),
         uploader_email=current_user.email
     )
     session.add(new_paper)
@@ -27,7 +27,7 @@ def upload_paper(paper: schema_paper.PaperModel,
     return new_paper
 
 
-@router.get("/", response_model=list[schema_paper.PaperGet])
+@router.get("/available", response_model=list[schema_paper.PaperGet])
 def get_papers(
         title: Optional[str] = Query(None, description="Название статьи"),
         author: Optional[str] = Query(None, description="Автор статьи"),
@@ -35,7 +35,41 @@ def get_papers(
         limit: int = 100,
         session: Session = Depends(get_session)
     ):
-    query = session.query(schema_paper.PaperDb)
+    query = session.query(schema_paper.PaperDb).filter(
+        schema_paper.PaperDb.status == True
+    )
+
+    if title:
+        query = query.filter(schema_paper.PaperDb.title.ilike(f"%{title}%"))
+    if author:
+        query = query.filter(schema_paper.PaperDb.author.ilike(f"%{author}%"))
+    if field:
+        query = query.filter(schema_paper.PaperDb.field.ilike(f"%{field}%"))
+
+    papers = query.limit(limit).all()
+
+    if not papers:
+        raise HTTPException(
+            status_code=404,
+            detail="Статьи не найдены"
+        )
+
+    return papers
+
+
+
+
+@router.get("/wanted", response_model=list[schema_paper.PaperAsk])
+def see_wanted_papers(
+        title: Optional[str] = Query(None, description="Название статьи"),
+        author: Optional[str] = Query(None, description="Автор статьи"),
+        field: Optional[str] = Query(None, description="Тематика статьи"),
+        limit: int = 100,
+        session: Session = Depends(get_session)
+    ):
+    query = session.query(schema_paper.PaperDb).filter(
+        schema_paper.PaperDb.status == False
+    )
 
     if title:
         query = query.filter(schema_paper.PaperDb.title.ilike(f"%{title}%"))

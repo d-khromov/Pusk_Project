@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from db import Base
 
 
-class PaperModel(BaseModel):
+class PaperBaseModel(BaseModel):
     title: str = Field(
         title="Название статьи",
         max_length=300
@@ -16,27 +16,20 @@ class PaperModel(BaseModel):
         title="Область науки",
         max_length=300
     )
-    status:str = Field(
-        title="Требуется",
-        max_length=300
-    )
+
+class PaperModel(PaperBaseModel):
+    status:bool
 
 
-class PaperGet(BaseModel):
-    title: str = Field(
-        title="Название статьи",
-        max_length=300
-    )
-    author: str = Field(
-        title="Автор",
-        max_length=300
-    )
-    field: str = Field(
-        title="Область науки",
-        max_length=300
-    )
-    uploader_email: str = Field(
+class PaperGet(PaperBaseModel):
+    email: str = Field(
         title="Email загрузившего пользователя",
+        max_length=300
+    )
+
+class PaperAsk(PaperBaseModel):
+    email: str = Field(
+        title="Email пользователя, которому нужна статья",
         max_length=300
     )
 
@@ -47,5 +40,5 @@ class PaperDb(Base):
     title:str = Column(String, unique=True, index=True)
     author:str = Column(String, unique=False, index=True)
     field:str = Column(String, unique=False, index=True)
-    status:str = Column(String, unique=False, index=True)
-    uploader_email:str = Column(String, unique=False, index=True)
+    status:bool = Column(Boolean, unique=False, index=True)
+    email:str = Column(String, unique=False, index=True)
