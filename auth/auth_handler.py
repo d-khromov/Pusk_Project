@@ -56,7 +56,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
         raise credentials_exception
 
     statement = (select(schema_user.UserDb)
-                 .where(schema_user.UserDb.email == username))
+                 .where(schema_user.UserDb.username == username))
     user = db_session.execute(statement).scalar_one_or_none()
 
     if user is None:

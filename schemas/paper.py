@@ -9,18 +9,36 @@ class PaperModel(BaseModel):
         max_length=300
     )
     author: str = Field(
-        author="Автор",
+        title="Автор",
         max_length=300
     )
     field: str = Field(
-        field="Область науки",
+        title="Область науки",
         max_length=300
     )
     status:str = Field(
-        status="Требуется",
+        title="Требуется",
         max_length=300
     )
 
+
+class PaperGet(BaseModel):
+    title: str = Field(
+        title="Название статьи",
+        max_length=300
+    )
+    author: str = Field(
+        title="Автор",
+        max_length=300
+    )
+    field: str = Field(
+        title="Область науки",
+        max_length=300
+    )
+    uploader_email: str = Field(
+        title="Email загрузившего пользователя",
+        max_length=300
+    )
 
 
 class PaperDb(Base):
@@ -30,4 +48,4 @@ class PaperDb(Base):
     author:str = Column(String, unique=False, index=True)
     field:str = Column(String, unique=False, index=True)
     status:str = Column(String, unique=False, index=True)
-    #uploader:int = Column(Integer, ForeignKey("users.id"))
+    uploader_email:str = Column(String, unique=False, index=True)

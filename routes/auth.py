@@ -10,7 +10,7 @@ from config import settings
 from datetime import timedelta
 
 
-router = APIRouter(prefix="/auth", tags=["Безопасность"])
+router = APIRouter(prefix="/auth", tags=["Пользователи"])
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED,
              response_model=int,
@@ -40,7 +40,7 @@ def create_user(user: schema_user.UserModel,
 def user_login(login_attempt_data: OAuth2PasswordRequestForm = Depends(),
                db_session: Session = Depends(get_session)):
     statement = (select(schema_user.UserDb)
-                 .where(schema_user.UserDb.email == login_attempt_data.username))
+                 .where(schema_user.UserDb.username == login_attempt_data.username))
     existing_user = db_session.execute(statement).scalar_one_or_none()
 
     if not existing_user:
